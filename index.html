@@ -44,7 +44,6 @@
             overflow-x: hidden;
         }
 
-        /* ── NOISE OVERLAY ── */
         body::before {
             content: '';
             position: fixed;
@@ -264,7 +263,7 @@
             }
         }
 
-        /* ── SECTION BASE ── */
+        /* ── SECTIONS ── */
         section {
             padding: 6rem 5vw;
             position: relative;
@@ -612,6 +611,39 @@
             color: var(--muted);
         }
 
+        .cert-card {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.2rem 1.8rem;
+            margin-top: 1rem;
+        }
+
+        .cert-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(200, 241, 53, 0.1);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        .cert-name {
+            font-weight: 500;
+        }
+
+        .cert-date {
+            font-size: 0.8rem;
+            color: var(--muted);
+            font-family: var(--font-mono);
+        }
+
         /* ── CONTACT ── */
         .contact-section {
             background: var(--surface);
@@ -673,42 +705,494 @@
             font-family: var(--font-mono);
         }
 
-        /* ── CERTIFICATION ── */
-        .cert-card {
-            display: inline-flex;
-            align-items: center;
-            gap: 1rem;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1.2rem 1.8rem;
-            margin-top: 1rem;
-        }
+        /* ══════════════════════════════════════
+           CHATBOT STYLES
+        ══════════════════════════════════════ */
 
-        .cert-icon {
-            width: 36px;
-            height: 36px;
-            background: rgba(200, 241, 53, 0.1);
-            border-radius: 6px;
+        /* Floating trigger button */
+        .chat-trigger {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 999;
+            width: 58px;
+            height: 58px;
+            background: var(--accent);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--accent);
-            font-size: 1.2rem;
+            box-shadow: 0 4px 24px rgba(200, 241, 53, 0.35), 0 0 0 0 rgba(200, 241, 53, 0.4);
+            transition: transform 0.25s cubic-bezier(.34, 1.56, .64, 1), box-shadow 0.25s;
+            animation: chatPulse 3s ease-in-out infinite;
         }
 
-        .cert-name {
+        .chat-trigger:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 36px rgba(200, 241, 53, 0.55);
+            animation: none;
+        }
+
+        .chat-trigger svg {
+            transition: opacity 0.2s, transform 0.2s;
+        }
+
+        .chat-trigger.open .icon-chat {
+            opacity: 0;
+            transform: scale(0.5) rotate(90deg);
+        }
+
+        .chat-trigger.open .icon-close {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+
+        .chat-trigger .icon-close {
+            position: absolute;
+            opacity: 0;
+            transform: scale(0.5) rotate(-90deg);
+        }
+
+        @keyframes chatPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 4px 24px rgba(200, 241, 53, 0.35), 0 0 0 0 rgba(200, 241, 53, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 4px 24px rgba(200, 241, 53, 0.35), 0 0 0 10px rgba(200, 241, 53, 0);
+            }
+        }
+
+        /* Notification dot */
+        .chat-notif {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 12px;
+            height: 12px;
+            background: #ff4f4f;
+            border-radius: 50%;
+            border: 2px solid var(--bg);
+            animation: notifPop 0.4s 2s both;
+        }
+
+        @keyframes notifPop {
+            from {
+                transform: scale(0);
+            }
+
+            to {
+                transform: scale(1);
+            }
+        }
+
+        /* Chat window */
+        .chat-window {
+            position: fixed;
+            bottom: 6rem;
+            right: 2rem;
+            z-index: 998;
+            width: 360px;
+            height: 500px;
+            max-height: calc(100vh - 8rem);
+            max-width: calc(100vw - 4rem);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(200, 241, 53, 0.08);
+            transform: translateY(20px) scale(0.95);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.35s cubic-bezier(.34, 1.56, .64, 1), opacity 0.25s ease;
+        }
+
+        .chat-window.open {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* Chat header */
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1rem 1.2rem;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .chat-avatar {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 1rem;
+            color: #0d0d0f;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .chat-header-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chat-header-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text);
+            line-height: 1.2;
+        }
+
+        .chat-header-status {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--muted);
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #4ade80;
+            box-shadow: 0 0 6px rgba(74, 222, 128, 0.6);
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .chat-header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-action-btn {
+            width: 30px;
+            height: 30px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .chat-action-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Messages area */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            scroll-behavior: smooth;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        /* Message bubbles */
+        .msg {
+            display: flex;
+            flex-direction: column;
+            max-width: 82%;
+            gap: 0.25rem;
+            animation: msgIn 0.3s cubic-bezier(.34, 1.56, .64, 1);
+        }
+
+        @keyframes msgIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        .msg.bot {
+            align-self: flex-start;
+        }
+
+        .msg.user {
+            align-self: flex-end;
+        }
+
+        .msg-bubble {
+            padding: 0.7rem 1rem;
+            border-radius: 14px;
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+
+        .msg.bot .msg-bubble {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+            color: var(--text);
+        }
+
+        .msg.user .msg-bubble {
+            background: var(--accent);
+            color: #0d0d0f;
+            border-bottom-right-radius: 4px;
             font-weight: 500;
         }
 
-        .cert-date {
-            font-size: 0.8rem;
-            color: var(--muted);
+        .msg-time {
             font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--muted);
+            padding: 0 0.3rem;
+        }
+
+        .msg.user .msg-time {
+            text-align: right;
+        }
+
+        /* Typing indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0.9rem 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            border-bottom-left-radius: 4px;
+            width: fit-content;
+            max-width: 80px;
+        }
+
+        .typing-dot {
+            width: 7px;
+            height: 7px;
+            background: var(--muted);
+            border-radius: 50%;
+            animation: typingBounce 1.2s ease-in-out infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingBounce {
+
+            0%,
+            80%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+
+            40% {
+                transform: translateY(-6px);
+                opacity: 1;
+            }
+        }
+
+        /* Quick reply chips */
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+        }
+
+        .quick-chip {
+            padding: 0.3rem 0.8rem;
+            background: transparent;
+            border: 1px solid rgba(200, 241, 53, 0.3);
+            border-radius: 100px;
+            font-size: 0.78rem;
+            color: var(--accent);
+            cursor: pointer;
+            font-family: var(--font-mono);
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .quick-chip:hover {
+            background: rgba(200, 241, 53, 0.1);
+            border-color: var(--accent);
+        }
+
+        /* Input area */
+        .chat-input-area {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+            flex-shrink: 0;
+        }
+
+        .chat-input-row {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.5rem 0.5rem 0.5rem 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input-row:focus-within {
+            border-color: rgba(200, 241, 53, 0.4);
+        }
+
+        .chat-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text);
+            font-family: var(--font-body);
+            font-size: 0.88rem;
+            resize: none;
+            max-height: 80px;
+            line-height: 1.5;
+        }
+
+        .chat-input::placeholder {
+            color: var(--muted);
+        }
+
+        .chat-send {
+            width: 36px;
+            height: 36px;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0d0d0f;
+            flex-shrink: 0;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+
+        .chat-send:hover {
+            transform: scale(1.08);
+            box-shadow: 0 4px 16px rgba(200, 241, 53, 0.3);
+        }
+
+        .chat-send:disabled {
+            background: var(--border);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .chat-send:disabled svg {
+            opacity: 0.4;
+        }
+
+        .chat-footer-note {
+            text-align: center;
+            margin-top: 0.6rem;
+            font-family: var(--font-mono);
+            font-size: 0.63rem;
+            color: var(--muted);
+            opacity: 0.7;
+        }
+
+        /* API status badge */
+        .api-status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.4rem;
+            background: rgba(200, 241, 53, 0.05);
+            border-bottom: 1px solid var(--border);
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--muted);
+        }
+
+        .api-status-bar .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--muted);
+        }
+
+        .api-status-bar.connected .dot {
+            background: #4ade80;
+            box-shadow: 0 0 6px rgba(74, 222, 128, 0.5);
+        }
+
+        .api-status-bar.connected {
+            color: #4ade80;
         }
 
         /* ── RESPONSIVE ── */
         @media (max-width: 768px) {
+            .chat-window {
+                width: calc(100vw - 2rem);
+                max-width: none;
+                height: 450px;
+                max-height: calc(100vh - 7rem);
+                right: 1rem;
+                bottom: 5.5rem;
+                z-index: 1000;
+            }
+
+            .chat-trigger {
+                right: 1rem;
+                bottom: 1rem;
+            }
+
             .about-grid {
                 grid-template-columns: 1fr;
                 gap: 2.5rem;
@@ -751,6 +1235,18 @@
 
             .about-stats {
                 gap: 1rem;
+            }
+
+            .chat-window {
+                width: calc(100vw - 2rem);
+                right: 1rem;
+                bottom: 5.5rem;
+                height: 500px;
+            }
+
+            .chat-trigger {
+                bottom: 1.2rem;
+                right: 1rem;
             }
         }
 
@@ -867,56 +1363,35 @@
         <div class="skills-grid">
             <div class="skill-group">
                 <div class="skill-group-title">Languages</div>
-                <div class="skill-tags">
-                    <span class="skill-tag">C++</span>
-                    <span class="skill-tag">Java</span>
-                    <span class="skill-tag">JavaScript</span>
-                </div>
+                <div class="skill-tags"><span class="skill-tag">C++</span><span class="skill-tag">Java</span><span
+                        class="skill-tag">JavaScript</span></div>
             </div>
             <div class="skill-group">
                 <div class="skill-group-title">Frontend</div>
-                <div class="skill-tags">
-                    <span class="skill-tag">HTML5</span>
-                    <span class="skill-tag">CSS3</span>
-                    <span class="skill-tag">React.js</span>
-                    <span class="skill-tag">ES6+</span>
-                </div>
+                <div class="skill-tags"><span class="skill-tag">HTML5</span><span class="skill-tag">CSS3</span><span
+                        class="skill-tag">React.js</span><span class="skill-tag">ES6+</span></div>
             </div>
             <div class="skill-group">
                 <div class="skill-group-title">Backend & DB</div>
-                <div class="skill-tags">
-                    <span class="skill-tag">Node.js</span>
-                    <span class="skill-tag">FastAPI</span>
-                    <span class="skill-tag">MySQL</span>
-                    <span class="skill-tag">MongoDB</span>
-                    <span class="skill-tag">Oracle</span>
-                </div>
+                <div class="skill-tags"><span class="skill-tag">Node.js</span><span
+                        class="skill-tag">FastAPI</span><span class="skill-tag">MySQL</span><span
+                        class="skill-tag">MongoDB</span><span class="skill-tag">Oracle</span></div>
             </div>
             <div class="skill-group">
                 <div class="skill-group-title">CMS & Tools</div>
-                <div class="skill-tags">
-                    <span class="skill-tag">WordPress</span>
-                    <span class="skill-tag">Elementor</span>
-                    <span class="skill-tag">Wix</span>
-                    <span class="skill-tag">Git</span>
-                    <span class="skill-tag">GitHub</span>
-                </div>
+                <div class="skill-tags"><span class="skill-tag">WordPress</span><span
+                        class="skill-tag">Elementor</span><span class="skill-tag">Wix</span><span
+                        class="skill-tag">Git</span><span class="skill-tag">GitHub</span></div>
             </div>
             <div class="skill-group">
                 <div class="skill-group-title">Cloud & DevOps</div>
-                <div class="skill-tags">
-                    <span class="skill-tag">AWS EC2</span>
-                    <span class="skill-tag">Docker</span>
-                    <span class="skill-tag">CI/CD</span>
-                </div>
+                <div class="skill-tags"><span class="skill-tag">AWS EC2</span><span class="skill-tag">Docker</span><span
+                        class="skill-tag">CI/CD</span></div>
             </div>
             <div class="skill-group">
                 <div class="skill-group-title">AI / ML</div>
-                <div class="skill-tags">
-                    <span class="skill-tag">LangChain</span>
-                    <span class="skill-tag">Groq LLaMA 3</span>
-                    <span class="skill-tag">NLP</span>
-                </div>
+                <div class="skill-tags"><span class="skill-tag">LangChain</span><span class="skill-tag">Groq LLaMA
+                        3</span><span class="skill-tag">NLP</span></div>
             </div>
         </div>
     </section>
@@ -926,7 +1401,6 @@
         <p class="section-label">// 03 — Experience</p>
         <h2 class="section-title">Work History</h2>
         <div class="timeline">
-
             <div class="timeline-item">
                 <div class="timeline-date">Jul 2025 – Aug 2025</div>
                 <div class="timeline-role">Web Developer Intern</div>
@@ -940,7 +1414,6 @@
                         deadlines.</li>
                 </ul>
             </div>
-
             <div class="timeline-item">
                 <div class="timeline-date">Oct 2024 – Present</div>
                 <div class="timeline-role">Freelance Full Stack Developer</div>
@@ -954,7 +1427,6 @@
                         schedule.</li>
                 </ul>
             </div>
-
             <div class="timeline-item">
                 <div class="timeline-date">Sep 2024 – Sep 2025</div>
                 <div class="timeline-role">Member — Robotics & Automation Club</div>
@@ -964,7 +1436,6 @@
                     <li>Applied software skills to support hardware-software integration in automation projects.</li>
                 </ul>
             </div>
-
         </div>
     </section>
 
@@ -973,37 +1444,28 @@
         <p class="section-label">// 04 — Projects</p>
         <h2 class="section-title">Featured Work</h2>
         <div class="projects-grid">
-
             <div class="project-card">
                 <div class="project-number">01 / FYP</div>
                 <div class="project-title">AI-Powered Resume Builder</div>
                 <p class="project-desc">An intelligent resume builder that generates professional, ATS-optimized resumes
                     from user input using NLP. Recommends content improvements and tailors resumes for specific job
                     descriptions.</p>
-                <div class="project-tech">
-                    <span class="tech-tag">React.js</span>
-                    <span class="tech-tag">Node.js</span>
-                    <span class="tech-tag">NLP</span>
-                    <span class="tech-tag">AI/ML</span>
-                </div>
+                <div class="project-tech"><span class="tech-tag">React.js</span><span
+                        class="tech-tag">Node.js</span><span class="tech-tag">NLP</span><span
+                        class="tech-tag">AI/ML</span></div>
                 <span style="font-family:var(--font-mono);font-size:0.75rem;color:var(--muted)">Sep 2025 – Jun
                     2026</span>
             </div>
-
             <div class="project-card">
                 <div class="project-number">02 / Live</div>
                 <div class="project-title">CodeGenius AI</div>
                 <p class="project-desc">A multi-agent AI system for code generation, debugging, explanation, and SRS
                     document generation. Features real-time streaming responses with contextual reasoning for complex
                     developer queries.</p>
-                <div class="project-tech">
-                    <span class="tech-tag">Groq LLaMA 3</span>
-                    <span class="tech-tag">LangChain</span>
-                    <span class="tech-tag">FastAPI</span>
-                    <span class="tech-tag">React.js</span>
-                    <span class="tech-tag">AWS EC2</span>
-                    <span class="tech-tag">Docker</span>
-                </div>
+                <div class="project-tech"><span class="tech-tag">Groq LLaMA 3</span><span
+                        class="tech-tag">LangChain</span><span class="tech-tag">FastAPI</span><span
+                        class="tech-tag">React.js</span><span class="tech-tag">AWS EC2</span><span
+                        class="tech-tag">Docker</span></div>
                 <a href="http://3.94.251.182/" target="_blank" class="project-link">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
@@ -1013,40 +1475,27 @@
                     View Live
                 </a>
             </div>
-
             <div class="project-card">
                 <div class="project-number">03</div>
                 <div class="project-title">Lumina-Shop</div>
                 <p class="project-desc">A premium, modern E-Commerce platform built with React.js, Vite, and Tailwind
                     CSS. Features include a persistent shopping cart, responsive product filtering, and smooth Framer
                     Motion animations.</p>
-                <div class="project-tech">
-                    <span class="tech-tag">React.js</span>
-                    <span class="tech-tag">Vite</span>
-                    <span class="tech-tag">Tailwind CSS</span>
-                    <span class="tech-tag">Framer Motion</span>
-                </div>
+                <div class="project-tech"><span class="tech-tag">React.js</span><span class="tech-tag">Vite</span><span
+                        class="tech-tag">Tailwind CSS</span><span class="tech-tag">Framer Motion</span></div>
                 <span style="font-family:var(--font-mono);font-size:0.75rem;color:var(--muted)">March 2026</span>
             </div>
-
             <div class="project-card">
                 <div class="project-number">04</div>
                 <div class="project-title">The-AI-Personal-Life-Operating-System</div>
                 <p class="project-desc">The AI Personal Life Operating System (Jarvis-like Assistant) is designed as a
                     modern, event-driven, multi-agent microservices architecture. It combines a highly responsive
-                    real-time React frontend with a heavy-duty Python FastAPI backend orchestrated by LangGraph.
-
-                </p>
-                <div class="project-tech">
-                    <span class="tech-tag">React.js</span>
-                    <span class="tech-tag">FastAPI</span>
-                    <span class="tech-tag">LangGraph</span>
-                    <span class="tech-tag">GROQ LLaMA 3</span>
-
-                </div>
+                    real-time React frontend with a heavy-duty Python FastAPI backend orchestrated by LangGraph.</p>
+                <div class="project-tech"><span class="tech-tag">React.js</span><span
+                        class="tech-tag">FastAPI</span><span class="tech-tag">LangGraph</span><span
+                        class="tech-tag">GROQ LLaMA 3</span></div>
                 <span style="font-family:var(--font-mono);font-size:0.75rem;color:var(--muted)">April 2026</span>
             </div>
-
         </div>
     </section>
 
@@ -1061,21 +1510,17 @@
                 <div class="edu-location">Pakistan</div>
                 <div class="courses-title">Relevant Courses</div>
                 <div class="courses-list">
-                    <span class="course-pill">OOP</span>
-                    <span class="course-pill">Data Structures & Algorithms</span>
-                    <span class="course-pill">Machine Learning</span>
-                    <span class="course-pill">Artificial Intelligence</span>
-                    <span class="course-pill">DBMS</span>
-                    <span class="course-pill">Software Architecture</span>
-                    <span class="course-pill">Computer Networks</span>
-                    <span class="course-pill">Operating Systems</span>
-                    <span class="course-pill">Mobile App Dev</span>
-                    <span class="course-pill">Digital Image Processing</span>
+                    <span class="course-pill">OOP</span><span class="course-pill">Data Structures &
+                        Algorithms</span><span class="course-pill">Machine Learning</span><span
+                        class="course-pill">Artificial Intelligence</span><span class="course-pill">DBMS</span><span
+                        class="course-pill">Software Architecture</span><span class="course-pill">Computer
+                        Networks</span><span class="course-pill">Operating Systems</span><span
+                        class="course-pill">Mobile App Dev</span><span class="course-pill">Digital Image
+                        Processing</span>
                 </div>
             </div>
             <div class="edu-period">Sep 2022 – Jun 2026</div>
         </div>
-
         <div style="margin-top:2rem;">
             <p
                 style="font-family:var(--font-mono);font-size:0.75rem;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:1rem;">
@@ -1135,8 +1580,98 @@
         <span>Made With ❤️ by Areeba</span>
     </footer>
 
-    <!-- SCROLL ANIMATION -->
+
+    <!-- ══════════════════════════════════════
+         CHATBOT UI
+    ══════════════════════════════════════ -->
+
+    <!-- Floating trigger button -->
+    <button class="chat-trigger" id="chatTrigger" aria-label="Open chat" type="button">
+        <div class="chat-notif" id="chatNotif"></div>
+        <!-- Chat icon -->
+        <svg class="icon-chat" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0d0d0f"
+            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="10" rx="2" />
+            <circle cx="12" cy="5" r="2" />
+            <path d="M12 7v4" />
+            <line x1="8" y1="16" x2="8" y2="16" />
+            <line x1="16" y1="16" x2="16" y2="16" />
+        </svg>
+        <!-- Close icon -->
+        <svg class="icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0d0d0f"
+            stroke-width="2.5" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+    </button>
+
+    <!-- Chat window -->
+    <div class="chat-window" id="chatWindow" role="dialog" aria-label="Chat with Areeba's assistant">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="chat-avatar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0d0d0f" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="10" rx="2" />
+                    <circle cx="12" cy="5" r="2" />
+                    <path d="M12 7v4" />
+                    <line x1="8" y1="16" x2="8" y2="16" />
+                    <line x1="16" y1="16" x2="16" y2="16" />
+                </svg>
+            </div>
+            <div class="chat-header-info">
+                <div class="chat-header-name">Areeba's Assistant</div>
+                <div class="chat-header-status">
+                    <div class="status-dot"></div>
+                    Online · Ask me anything
+                </div>
+            </div>
+            <div class="chat-header-actions">
+                <button class="chat-action-btn" id="clearBtn" title="Clear chat" aria-label="Clear chat" type="button">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                        <path d="M10 11v6M14 11v6" />
+                        <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- API status bar -->
+        <div class="api-status-bar" id="apiStatusBar">
+            <div class="dot"></div>
+            <span id="apiStatusText">Connect your backend API to enable AI responses</span>
+        </div>
+
+        <!-- Messages -->
+        <div class="chat-messages" id="chatMessages">
+            <!-- Welcome message rendered by JS -->
+        </div>
+
+        <!-- Input -->
+        <div class="chat-input-area">
+            <div class="chat-input-row">
+                <textarea class="chat-input" id="chatInput" placeholder="Ask about my projects, skills, or experience…"
+                    rows="1" aria-label="Type your message"></textarea>
+                <button class="chat-send" id="chatSend" aria-label="Send message" type="button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13" />
+                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                    </svg>
+                </button>
+            </div>
+            <p class="chat-footer-note">Made with love by Areeba</p>
+        </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════
+         SCRIPTS
+    ══════════════════════════════════════ -->
     <script>
+        /* ── Scroll animation (existing) ── */
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(e => {
                 if (e.isIntersecting) {
@@ -1152,6 +1687,264 @@
             el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(el);
         });
+
+
+        /* ══════════════════════════════════════
+           CHATBOT LOGIC
+        ══════════════════════════════════════ */
+
+        // ── CONFIG ──────────────────────────────────────────────────────────────
+        // REPLACE this URL with your backend endpoint once it's ready.
+        // Expected: POST /chat  →  body: { message: string, history: Array }
+        //           Response:  { reply: string }  (or stream if you prefer)
+        const API_ENDPOINT = 'http://3.84.223.1:8000/chat/stream';
+        // ────────────────────────────────────────────────────────────────────────
+
+        const trigger = document.getElementById('chatTrigger');
+        const chatWindow = document.getElementById('chatWindow');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const chatSend = document.getElementById('chatSend');
+        const clearBtn = document.getElementById('clearBtn');
+        const chatNotif = document.getElementById('chatNotif');
+        const apiStatusBar = document.getElementById('apiStatusBar');
+        const apiStatusText = document.getElementById('apiStatusText');
+
+        let isOpen = false;
+        let isTyping = false;
+        let msgHistory = [];   // [{role: 'user'|'assistant', content: '...'}]
+        let apiReady = API_ENDPOINT !== 'YOUR_BACKEND_API_URL_HERE/chat';
+
+        // Update API status badge
+        function setApiStatus(connected, label) {
+            apiStatusBar.className = 'api-status-bar' + (connected ? ' connected' : '');
+            apiStatusText.textContent = label;
+        }
+
+        // ── OPEN / CLOSE ────────────────────────────────────────────────────────
+        function toggleChat() {
+            isOpen = !isOpen;
+            chatWindow.classList.toggle('open', isOpen);
+            trigger.classList.toggle('open', isOpen);
+            if (isOpen) {
+                chatNotif.style.display = 'none';
+                chatInput.focus();
+                scrollToBottom();
+            }
+        }
+        trigger.addEventListener('click', toggleChat);
+
+        // Close on outside click
+        document.addEventListener('click', (e) => {
+            if (isOpen && document.body.contains(e.target) && !chatWindow.contains(e.target) && !trigger.contains(e.target)) toggleChat();
+        });
+
+        // ── CLEAR ───────────────────────────────────────────────────────────────
+        clearBtn.addEventListener('click', () => {
+            msgHistory = [];
+            chatMessages.innerHTML = '';
+            addWelcomeMessage();
+        });
+
+        // ── SCROLL HELPER ────────────────────────────────────────────────────────
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // ── TIME HELPER ──────────────────────────────────────────────────────────
+        function getTime() {
+            return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatText(text) {
+            // Escape HTML for safety
+            let html = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            // Bold
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            // Italic
+            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            // Lists (line starts with * or - )
+            html = html.replace(/^[\s]*[-*][\s]+(.*)$/gm, '<span style="display:block; margin-left:10px; margin-top:4px;">• $1</span>');
+            // Newlines
+            html = html.replace(/\n/g, '<br>');
+            return html;
+        }
+
+        // ── RENDER MESSAGE ───────────────────────────────────────────────────────
+        function addMessage(role, text, chips) {
+            const wrap = document.createElement('div');
+            wrap.className = `msg ${role}`;
+
+            const bubble = document.createElement('div');
+            bubble.className = 'msg-bubble';
+            bubble.innerHTML = formatText(text);
+
+            const time = document.createElement('div');
+            time.className = 'msg-time';
+            time.textContent = getTime();
+
+            wrap.appendChild(bubble);
+            if (chips && chips.length) {
+                const qr = document.createElement('div');
+                qr.className = 'quick-replies';
+                chips.forEach(chip => {
+                    const btn = document.createElement('button');
+                    btn.className = 'quick-chip';
+                    btn.textContent = chip;
+                    btn.type = 'button';
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        qr.remove();
+                        sendMessage(chip);
+                    });
+                    qr.appendChild(btn);
+                });
+                wrap.appendChild(qr);
+            }
+            wrap.appendChild(time);
+            chatMessages.appendChild(wrap);
+            scrollToBottom();
+            return wrap;
+        }
+
+        // ── TYPING INDICATOR ────────────────────────────────────────────────────
+        function showTyping() {
+            const wrap = document.createElement('div');
+            wrap.className = 'msg bot';
+            wrap.id = 'typingWrap';
+            const ind = document.createElement('div');
+            ind.className = 'typing-indicator';
+            ind.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+            wrap.appendChild(ind);
+            chatMessages.appendChild(wrap);
+            scrollToBottom();
+        }
+        function hideTyping() {
+            const el = document.getElementById('typingWrap');
+            if (el) el.remove();
+        }
+
+        // ── WELCOME MESSAGE ──────────────────────────────────────────────────────
+        function addWelcomeMessage() {
+            addMessage('bot',
+                "Hi there! 👋 I'm Areeba's AI assistant. Ask me about her skills, projects, experience, or how to get in touch!",
+                ['Projects', 'Skills', 'Contact Areeba', 'Experience']
+            );
+        }
+
+        // ── SEND MESSAGE ─────────────────────────────────────────────────────────
+        async function sendMessage(text) {
+            text = (text || chatInput.value).trim();
+            if (!text || isTyping) return;
+
+            chatInput.value = '';
+            chatInput.style.height = 'auto';
+            chatSend.disabled = true;
+            isTyping = true;
+
+            addMessage('user', text);
+            msgHistory.push({ role: 'user', content: text });
+
+            showTyping();
+
+            try {
+                if (!apiReady) {
+                    // ── DEMO MODE (no backend yet) ──────────────────────────────
+                    await new Promise(r => setTimeout(r, 900 + Math.random() * 600));
+                    hideTyping();
+                    const reply = getDemoReply(text);
+                    addMessage('bot', reply);
+                    msgHistory.push({ role: 'assistant', content: reply });
+                    setApiStatus(false, 'Demo mode — plug in your API endpoint to go live');
+                } else {
+                    // ── REAL API CALL ───────────────────────────────────────────
+                    const res = await fetch(API_ENDPOINT, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: text, history: msgHistory.slice(-10) })
+                    });
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+                    hideTyping();
+                    const reader = res.body.getReader();
+                    const decoder = new TextDecoder('utf-8');
+                    let reply = '';
+
+                    // Create an empty bubble for the stream
+                    const botMsgWrap = addMessage('bot', '');
+                    const bubble = botMsgWrap.querySelector('.msg-bubble');
+
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        const chunk = decoder.decode(value, { stream: true });
+                        reply += chunk;
+                        bubble.innerHTML = formatText(reply);
+                        scrollToBottom();
+                    }
+
+                    msgHistory.push({ role: 'assistant', content: reply });
+                    setApiStatus(true, 'Connected');
+                }
+            } catch (err) {
+                hideTyping();
+                addMessage('bot', '⚠️ Could not reach the backend. Make sure your API is running and the endpoint is configured.');
+                setApiStatus(false, 'Backend unreachable — check API_ENDPOINT in the code');
+                console.error('Chatbot API error:', err);
+            }
+
+            isTyping = false;
+            chatSend.disabled = false;
+            chatInput.focus();
+        }
+
+        // ── DEMO REPLIES (shown before backend is connected) ─────────────────────
+        function getDemoReply(msg) {
+            const m = msg.toLowerCase();
+            if (m.includes('project') || m.includes('work') || m.includes('built')) {
+                return "Areeba has worked on some exciting projects! Her highlights include CodeGenius AI — a multi-agent system for code generation deployed on AWS — and an AI-powered resume builder (her Final Year Project) using NLP and React.js. She also built Lumina-Shop and a Jarvis-like personal OS. Check the Projects section for full details!";
+            }
+            if (m.includes('skill') || m.includes('tech') || m.includes('language') || m.includes('stack')) {
+                return "Areeba's core stack: React.js, Node.js, FastAPI, and Python on the backend — with MySQL, MongoDB, and Oracle for data. On the AI side she works with LangChain, Groq LLaMA 3, and NLP. She also deploys on AWS EC2 using Docker and CI/CD pipelines. For CMS work she uses WordPress and Elementor.";
+            }
+            if (m.includes('contact') || m.includes('hire') || m.includes('email') || m.includes('reach')) {
+                return "You can reach Areeba at areebaz665@gmail.com or call +92 316 2176393. She's open to freelance projects, internships, and full-time roles. Scroll to the Contact section to find all her links!";
+            }
+            if (m.includes('experience') || m.includes('intern') || m.includes('job') || m.includes('work history')) {
+                return "Areeba interned at Tecinn360 Pvt Ltd in Rawalpindi, building WordPress sites. She's also an active freelancer on Fiverr delivering full-stack web solutions for international clients since October 2024. Plus, she was part of the Robotics & Automation Club at UET Taxila.";
+            }
+            if (m.includes('education') || m.includes('university') || m.includes('degree') || m.includes('uet')) {
+                return "Areeba is completing a BSc in Software Engineering at UET Taxila (Sep 2022 – Jun 2026). Her coursework covers AI, Machine Learning, DSA, DBMS, Software Architecture, Networks, and more. She also holds a Java Programming certificate from Great Learning Academy.";
+            }
+            if (m.includes('hello') || m.includes('hi') || m.includes('hey')) {
+                return "Hey! 👋 Great to hear from you. I can tell you about Areeba's projects, skills, experience, or how to get in touch. What would you like to know?";
+            }
+            return "That's a great question! Once Areeba's backend is connected, I'll be able to give you a detailed AI-powered answer. In the meantime, feel free to explore the portfolio sections above or ask about her projects, skills, or experience!";
+        }
+
+        // ── INPUT HANDLING ───────────────────────────────────────────────────────
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        chatSend.addEventListener('click', () => sendMessage());
+
+        // Auto-resize textarea
+        chatInput.addEventListener('input', () => {
+            chatInput.style.height = 'auto';
+            chatInput.style.height = Math.min(chatInput.scrollHeight, 80) + 'px';
+        });
+
+        // ── INIT ─────────────────────────────────────────────────────────────────
+        addWelcomeMessage();
+        setApiStatus(false, apiReady ? 'Connecting…' : 'Demo mode — plug in your API endpoint to go live');
+
+        // Show notif dot after 3 seconds if chat hasn't been opened
+        setTimeout(() => {
+            if (!isOpen) chatNotif.style.display = 'block';
+        }, 3000);
     </script>
 
 </body>
