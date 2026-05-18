@@ -1713,7 +1713,7 @@
         let isOpen = false;
         let isTyping = false;
         let msgHistory = [];   // [{role: 'user'|'assistant', content: '...'}]
-        let apiReady = API_ENDPOINT !== 'YOUR_BACKEND_API_URL_HERE/chat';
+        let apiReady = API_ENDPOINT !== 'http://3.84.223.1:8000/chat';
 
         // Update API status badge
         function setApiStatus(connected, label) {
