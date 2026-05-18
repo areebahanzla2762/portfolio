@@ -1693,11 +1693,14 @@
            CHATBOT LOGIC
         ══════════════════════════════════════ */
 
-        // ── CONFIG ──────────────────────────────────────────────────────────────
-        // REPLACE this URL with your backend endpoint once it's ready.
-        // Expected: POST /chat  →  body: { message: string, history: Array }
-        //           Response:  { reply: string }  (or stream if you prefer)
-        const API_ENDPOINT = 'http://3.84.223.1:8000/chat/stream';
+        const isLocal = window.location.hostname === 'localhost' || 
+                        window.location.hostname === '127.0.0.1' || 
+                        window.location.hostname === '' || 
+                        window.location.protocol === 'file:';
+        
+        const API_ENDPOINT = isLocal 
+            ? 'http://3.84.223.1:8000/chat/stream' 
+            : '/api/chat/stream';
         // ────────────────────────────────────────────────────────────────────────
 
         const trigger = document.getElementById('chatTrigger');
@@ -1713,7 +1716,7 @@
         let isOpen = false;
         let isTyping = false;
         let msgHistory = [];   // [{role: 'user'|'assistant', content: '...'}]
-        let apiReady = API_ENDPOINT !== 'http://3.84.223.1:8000/chat';
+        let apiReady = true;
 
         // Update API status badge
         function setApiStatus(connected, label) {
